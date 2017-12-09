@@ -1,1 +1,1 @@
-# Diary
+# Journal
