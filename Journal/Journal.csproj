@@ -63,6 +63,7 @@
     <Compile Include="EditGradesDialog.xaml.cs">
       <DependentUpon>EditGradesDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="TeachersJournal.cs" />
     <Compile Include="Lesson.cs" />
     <Compile Include="EditStudentDialog.xaml.cs">
       <DependentUpon>EditStudentDialog.xaml</DependentUpon>

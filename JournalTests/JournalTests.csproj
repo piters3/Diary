@@ -58,7 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Journal\Journal.csproj">
-      <Project>{260629D0-9E25-411A-B127-9DCBCA8619C3}</Project>
+      <Project>{260629d0-9e25-411a-b127-9dcbca8619c3}</Project>
       <Name>Journal</Name>
     </ProjectReference>
   </ItemGroup>
