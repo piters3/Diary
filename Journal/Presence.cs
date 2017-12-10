@@ -34,6 +34,8 @@ namespace Journal
             }
         }
 
+        public Presence(){}
+
         public Presence(Student st, bool isPresent)
         {
             Student = st;

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,38 +21,37 @@ namespace Journal
         public MainWindow()
         {
             InitializeComponent();
-            _studentsList = new ObservableCollection<Student>
+            _studentsList = new ObservableCollection<Student>()
             {
-                new Student {Index =1, Name = "Piotr", Surname="Strzelecki"},
-                new Student {Index =2, Name = "Mateusz", Surname="Szpinda"},
-                new Student {Index =3, Name = "Piotr", Surname="Sobiborowicz"},
-                new Student {Index =4, Name = "Agata", Surname="Szarpak"},
-                new Student {Index =5, Name = "Daniel", Surname="Szlaski"},
+                //new Student {Index =1, Name = "Piotr", Surname="Strzelecki"},
+                //new Student {Index =2, Name = "Mateusz", Surname="Szpinda"},
+                //new Student {Index =3, Name = "Piotr", Surname="Sobiborowicz"},
+                //new Student {Index =4, Name = "Agata", Surname="Szarpak"},
+                //new Student {Index =5, Name = "Daniel", Surname="Szlaski"},
             };
-            StudentsListView.ItemsSource = _studentsList;
+
 
             _lessons = new ObservableCollection<Lesson>();
-            _lessonDates = new ObservableCollection<DateTime>(_lessons.Select(l => l.Date).ToList());
 
-            FillLessons();
-            AddLesson(new DateTime(2017, 08, 05));
+            //FillLessons();
+            //AddLesson(new DateTime(2017, 08, 05));
+            SetItemSources();
+        }
 
-            PresenceListView.ItemsSource = _lessons.Select(l => l.PresenceList).ToList()[0];
-            ChooseLessonComboBox.ItemsSource = _lessonDates;
-            ChooseLessonComboBox.SelectedItem = _lessons.Select(l => l.Date).ToList()[0];
+        private void SetItemSources()
+        {
+            try
+            {
+                _lessonDates = new ObservableCollection<DateTime>(_lessons.Select(l => l.Date).ToList());
+                StudentsListView.ItemsSource = _studentsList;
+                PresenceListView.ItemsSource = _lessons.Select(l => l.PresenceList).ToList()[0];
+                ChooseLessonComboBox.ItemsSource = _lessonDates;
+                ChooseLessonComboBox.SelectedItem = _lessons.Select(l => l.Date).ToList()[0];
+            }
+            catch (ArgumentOutOfRangeException)
+            {
 
-            //var lekcja = _lessons.Select(l => l.PresenceList).ToList()[0];
-            //foreach(var presence in lekcja)
-            //{
-            //    if(presence.Student.Index == 1){
-
-            //    }
-            //}
-
-
-
-            //test.ItemsSource = _lessons[0].PresenceList[0].Grades;
-
+            }
         }
 
         private double ComputeGroupAverage(List<Presence> presenceList)
@@ -224,6 +225,31 @@ namespace Journal
                     presence.Student.AbsencesNumber = 0;
                 }
             }
+        }
+
+        private void BtnSaveToFile_Click(object sender, RoutedEventArgs e)
+        {
+            string lessonsListPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\LessonsList.txt";
+            string lessonsListJson = JsonConvert.SerializeObject(_lessons.ToArray(), Formatting.Indented);
+            File.WriteAllText(lessonsListPath, lessonsListJson);
+            MessageBox.Show($"Pomyślnie zapisano dane w pliku: {lessonsListPath}", "Zapisano dane", MessageBoxButton.OK, MessageBoxImage.Information);           
+        }
+
+        private void BtnReadFromFile_Click(object sender, RoutedEventArgs e)
+        {
+            string lessonsListPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\LessonsList.txt";
+            var lessonsListFromFile = JsonConvert.DeserializeObject<ObservableCollection<Lesson>>(File.ReadAllText(lessonsListPath));
+            _lessons = lessonsListFromFile;
+            
+            var studentsFromFile = new ObservableCollection<Student>();
+            foreach(var item in lessonsListFromFile[0].PresenceList)
+            {
+                studentsFromFile.Add(item.Student);
+            }
+            _studentsList = studentsFromFile;
+
+            SetItemSources();
+            MessageBox.Show($"Pomyślnie wczytano dane z pliku: {lessonsListPath}", "Wczytano dane", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

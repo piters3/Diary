@@ -88,8 +88,8 @@
                 <TextBlock x:Name="AverageGroupTextBlock" Margin="10" FontSize="22"></TextBlock>
             </WrapPanel>
 
-
-
+            <Button x:Name="BtnSaveToFile" Content="Zapisz dane do pliku" FontSize="22" HorizontalAlignment="Right" Margin="10" Padding="3" Click="BtnSaveToFile_Click"></Button>
+            <Button x:Name="BtnReadFromFile" Content="Wczytaj dane z pliku" FontSize="22" HorizontalAlignment="Right" Margin="10" Padding="3" Click="BtnReadFromFile_Click"></Button>
 
 
         </StackPanel>
