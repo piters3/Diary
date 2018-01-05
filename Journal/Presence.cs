@@ -9,6 +9,7 @@ namespace Journal
         public Student Student { get; set; }
         public bool IsPresent { get; set; }
         public ObservableCollection<int> Grades { get; set; }
+        public double AverageGrade { get; set; }
 
         public string GradesString
         {
@@ -18,20 +19,22 @@ namespace Journal
             }
         }
 
-        public double AverageGrade
-        {
-            get
-            {
-                if (Grades.Count > 0)
-                {
-                    return Math.Round(Grades.Average(), 2);
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
+        //public double AverageGrade
+        //{
+        //    get
+        //    {
+        //        if (Grades.Count > 0)
+        //        {
+        //            return Math.Round(Grades.Average(), 2);
+        //        }
+        //        else
+        //        {
+        //            return 0;
+        //        }
+        //    }
+        //}
+
+
 
         public Presence(){}
 
@@ -43,6 +46,18 @@ namespace Journal
             if (isPresent == false)
             {
                 st.AbsencesNumber++;
+            }
+        }
+
+        public double ComputeStudentAverage()
+        {
+            if (Grades.Count > 0)
+            {
+                return AverageGrade =  Math.Round(Grades.Average(), 2);
+            }
+            else
+            {
+                return AverageGrade =  0 ;
             }
         }
     }

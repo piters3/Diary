@@ -18,19 +18,19 @@ namespace Journal
         {
             StudentsList = new ObservableCollection<Student>()
             {
-                //new Student {Index =1, Name = "Piotr", Surname="Strzelecki"},
-                //new Student {Index =2, Name = "Mateusz", Surname="Szpinda"},
-                //new Student {Index =3, Name = "Piotr", Surname="Sobiborowicz"},
-                //new Student {Index =4, Name = "Agata", Surname="Szarpak"},
-                //new Student {Index =5, Name = "Daniel", Surname="Szlaski"},
+                new Student {Index =1, Name = "Piotr", Surname="Strzelecki"},
+                new Student {Index =2, Name = "Mateusz", Surname="Szpinda"},
+                new Student {Index =3, Name = "Piotr", Surname="Sobiborowicz"},
+                new Student {Index =4, Name = "Agata", Surname="Szarpak"},
+                new Student {Index =5, Name = "Daniel", Surname="Szlaski"},
             };
 
 
             Lessons = new ObservableCollection<Lesson>();
             LessonDates = new ObservableCollection<DateTime>(Lessons.Select(l => l.Date).ToList());
 
-            //FillLessons();
-            //AddLesson(new DateTime(2017, 08, 05));           
+            FillLessons();
+            AddLesson(new DateTime(2017, 08, 05));
         }
 
         public void FillLessons()
@@ -90,11 +90,12 @@ namespace Journal
             return Math.Round(avg, 2);
         }
 
-        public void AddStudent(string inputedSurname, string inputedName)
+        public int AddStudent(string inputedName, string inputedSurname)
         {
-            if (StudentsList.Any(s => s.Surname == inputedSurname && s.Name == inputedName))
+            if (StudentsList.Any(s => s.Name == inputedName && s.Surname == inputedSurname))
             {
-                MessageBox.Show("Podany student już istnieje", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                //MessageBox.Show("Podany student już istnieje", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+                return 1;
             }
             else
             {
@@ -106,6 +107,7 @@ namespace Journal
                 };
 
                 StudentsList.Add(s);
+                return 2;
             }
         }
 
@@ -146,9 +148,35 @@ namespace Journal
             }
         }
 
+
+        public double ComputeStudentAverage(Presence pr)
+        {
+            return pr.ComputeStudentAverage();
+        }
+
+
+        public bool IsAbsent(Student st)
+        {
+            st.AbsencesNumber++;
+            return true;
+        }
+
+        public bool IsPresent(Student st)
+        {
+            if (st.AbsencesNumber > 0)
+            {
+                st.AbsencesNumber--;
+            }
+            else
+            {
+                st.AbsencesNumber = 0;
+            }
+            return false;
+        }
+
         public string SaveToFile()
         {
-            string lessonsListPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\LessonsList.txt";
+            string lessonsListPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\LessonsList.json";
             string lessonsListJson = JsonConvert.SerializeObject(Lessons.ToArray(), Formatting.Indented);
             File.WriteAllText(lessonsListPath, lessonsListJson);
             return lessonsListPath;
@@ -156,7 +184,7 @@ namespace Journal
 
         public string ReadFromFile()
         {
-            string lessonsListPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\LessonsList.txt";
+            string lessonsListPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop) + "\\LessonsList.json";
             var lessonsListFromFile = JsonConvert.DeserializeObject<ObservableCollection<Lesson>>(File.ReadAllText(lessonsListPath));
             Lessons = lessonsListFromFile;
 

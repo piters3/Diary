@@ -36,7 +36,11 @@ namespace Journal
 
         private void BtnAddStudent_Click(object sender, RoutedEventArgs e)
         {
-            Jrl.AddStudent(AddStudentSurname.Text, AddStudentName.Text);
+            int result = Jrl.AddStudent(AddStudentName.Text, AddStudentSurname.Text);
+            if (result == 1)
+            {
+                MessageBox.Show("Podany student już istnieje", "Błąd", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
 
@@ -74,6 +78,7 @@ namespace Journal
             if (PresenceListView.SelectedItem is Presence editedPresence)
             {
                 Jrl.AddGrade(editedPresence);
+                Jrl.ComputeStudentAverage(editedPresence);
             }
         }
 
@@ -89,25 +94,18 @@ namespace Journal
             }
         }
 
-        private void CheckBoxChanged(object sender, RoutedEventArgs e)              //Tego nie wiem jak przenieść
+        private void CheckBoxChanged(object sender, RoutedEventArgs e)  
         {
             CheckBox checkbox = sender as CheckBox;
             var presence = checkbox.DataContext as Presence;
 
             if (checkbox.IsChecked == false)
             {
-                presence.Student.AbsencesNumber++;
+                Jrl.IsPresent(presence.Student);
             }
             else
             {
-                if (presence.Student.AbsencesNumber > 0)
-                {
-                    presence.Student.AbsencesNumber--;
-                }
-                else
-                {
-                    presence.Student.AbsencesNumber = 0;
-                }
+                Jrl.IsAbsent(presence.Student);
             }
         }
 
